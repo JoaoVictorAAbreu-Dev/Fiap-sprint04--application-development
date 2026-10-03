@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - sprint-03
+      - sprint-04
   workflow_dispatch:
 
 permissions:
