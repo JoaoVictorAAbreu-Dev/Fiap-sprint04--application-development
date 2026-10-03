@@ -17,21 +17,13 @@ export const classifyVegetationHeight = (heightCm: number): VegetationHeightBand
     throw new RangeError('A altura da vegetação deve ser um número finito maior ou igual a zero.');
   }
 
-  const [monitoredBand, attentionBand, scheduledBand, priorityBand] = VEGETATION_HEIGHT_BANDS;
+  const matchingBand = VEGETATION_HEIGHT_BANDS.find((band) => heightCm <= band.maxHeightCm);
 
-  if (heightCm <= monitoredBand.maxHeightCm) {
-    return monitoredBand;
+  if (!matchingBand) {
+    throw new RangeError(`Nenhuma faixa de classificação cobre a altura de ${heightCm} cm.`);
   }
 
-  if (heightCm <= attentionBand.maxHeightCm) {
-    return attentionBand;
-  }
-
-  if (heightCm <= scheduledBand.maxHeightCm) {
-    return scheduledBand;
-  }
-
-  return priorityBand;
+  return matchingBand;
 };
 
 /**
