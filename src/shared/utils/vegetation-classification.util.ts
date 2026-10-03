@@ -1,56 +1,69 @@
-import type { Locality } from '@/domain/entities/locality.entity';
 import type {
+  MonitoredPoint,
   VegetationHeightBand,
   VegetationMonitoringPoint,
 } from '@/domain/entities/vegetation-monitoring.entity';
 import {
-  MONITORED_VEGETATION_HEIGHTS_CM,
+  INVALID_READING_ACTION,
+  INVALID_READING_PRIORITY,
   VEGETATION_HEIGHT_BANDS,
 } from '@/shared/constants/vegetation-height-bands';
 
+export const isValidHeightCm = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isFinite(value) && value >= 0;
+
 export const classifyVegetationHeight = (heightCm: number): VegetationHeightBand => {
-  if (!Number.isFinite(heightCm) || heightCm < 0) {
+  if (!isValidHeightCm(heightCm)) {
     throw new RangeError('A altura da vegetação deve ser um número finito maior ou igual a zero.');
   }
 
-  const [normalBand, attentionBand, riskBand, criticalBand] = VEGETATION_HEIGHT_BANDS;
+  const [monitoredBand, attentionBand, scheduledBand, priorityBand] = VEGETATION_HEIGHT_BANDS;
 
-  if (heightCm <= normalBand.maxHeightCm) {
-    return normalBand;
+  if (heightCm <= monitoredBand.maxHeightCm) {
+    return monitoredBand;
   }
 
   if (heightCm <= attentionBand.maxHeightCm) {
     return attentionBand;
   }
 
-  if (heightCm <= riskBand.maxHeightCm) {
-    return riskBand;
+  if (heightCm <= scheduledBand.maxHeightCm) {
+    return scheduledBand;
   }
 
-  return criticalBand;
+  return priorityBand;
 };
 
-export const buildVegetationMonitoringPoints = (
-  localities: readonly Locality[],
-  heightsCm: readonly number[] = MONITORED_VEGETATION_HEIGHTS_CM,
-): VegetationMonitoringPoint[] => {
-  if (heightsCm.length === 0) {
-    throw new RangeError('Informe ao menos uma altura para classificar os pontos monitorados.');
+/**
+ * Classifica um ponto sem lançar exceção: leituras ausentes ou inválidas viram "Leitura inválida"
+ * para que um único dado ruim não derrube o processamento do lote.
+ */
+export const classifyMonitoredPoint = (point: MonitoredPoint): VegetationMonitoringPoint => {
+  if (!isValidHeightCm(point.heightCm)) {
+    return {
+      ...point,
+      classification: 'Leitura inválida',
+      priority: INVALID_READING_PRIORITY,
+      recommendedAction: INVALID_READING_ACTION,
+    };
   }
 
-  const points: VegetationMonitoringPoint[] = [];
+  const band = classifyVegetationHeight(point.heightCm);
 
-  localities.forEach((locality, index) => {
-    const heightCm = heightsCm[index % heightsCm.length];
-    const band = classifyVegetationHeight(heightCm);
+  return {
+    ...point,
+    classification: band.classification,
+    priority: band.priority,
+    recommendedAction: band.recommendedAction,
+  };
+};
 
-    points.push({
-      ...locality,
-      heightCm,
-      classification: band.classification,
-      recommendedAction: band.recommendedAction,
-    });
+export const classifyMonitoredPoints = (points: readonly MonitoredPoint[]): VegetationMonitoringPoint[] => {
+  const classified: VegetationMonitoringPoint[] = [];
+
+  points.forEach((point) => {
+    classified.push(classifyMonitoredPoint(point));
   });
 
-  return points;
+  return classified;
 };

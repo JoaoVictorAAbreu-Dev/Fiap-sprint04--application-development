@@ -2,7 +2,8 @@ import { VegetationMonitoringTable } from '@/presentation/components/vegetation/
 import { useCurrentWeatherByLocalitiesQuery } from '@/presentation/hooks/queries/use-current-weather-by-localities.query';
 import { useMonitoredLocalitiesQuery } from '@/presentation/hooks/queries/use-monitored-localities.query';
 import { buildFictitiousSensingSnapshot } from '@/shared/utils/sensing-simulation.util';
-import { buildVegetationMonitoringPoints } from '@/shared/utils/vegetation-classification.util';
+import { useClassifiedPoints } from '@/presentation/hooks/use-monitored-points';
+import { sortByPriority } from '@/shared/utils/monitored-points.util';
 
 export const SensingPage = () => {
   const { data, isLoading, isError, error, refetch, isFetching } = useMonitoredLocalitiesQuery({
@@ -15,7 +16,8 @@ export const SensingPage = () => {
     error: weatherError,
     refetch: refetchWeather,
   } = useCurrentWeatherByLocalitiesQuery(data ?? []);
-  const vegetationPoints = buildVegetationMonitoringPoints(data ?? []);
+  const classifiedPoints = useClassifiedPoints();
+  const vegetationPoints = sortByPriority(classifiedPoints);
 
   if (isLoading) {
     return (
