@@ -1,4 +1,4 @@
-# GreenWatch — Sprint 3 de Application Development
+# GreenWatch — Sprint 4 de Application Development
 
 ## Integrantes
 
@@ -8,29 +8,29 @@
 | Luiz Henrique Barbosa Dias | 562399 |
 | Rodrigo Kenshin Viana Matayoshi | 564026 |
 
-### Monitoramento e classificação automática da vegetação em trechos rodoviários
+### Monitoramento, classificação automática e priorização de atendimento da vegetação em trechos rodoviários
 
-O **GreenWatch** é uma aplicação web de apoio ao monitoramento ambiental. Nesta Sprint, a solução evolui o trabalho desenvolvido anteriormente e passa a classificar automaticamente a condição da vegetação com base em sua altura, indicando o nível de atenção e a ação operacional recomendada para cada localidade.
+O **GreenWatch** é uma aplicação web de apoio à manutenção da vegetação ao longo de rodovias. Na Sprint 4 a solução deixa de apenas classificar localidades e passa a **processar vários pontos monitorados, classificar a condição de cada um, definir a prioridade e indicar a ação recomendada**, destacando os trechos que devem ser atendidos primeiro.
 
 ## Demonstração online
 
-**[Acessar o GreenWatch — Sprint 3](https://joaovictoraabreu-dev.github.io/Fiap-sprint03--application-development/)**
+**[Acessar o GreenWatch](https://joaovictoraabreu-dev.github.io/Fiap-sprint03--application-development/)**
 
-O ambiente publicado utiliza a branch `sprint-03` e pode ser usado para demonstrar o dashboard, o mapa, o sensoriamento e os alertas durante a gravação do vídeo Pitch.
+O workflow `deploy-pages.yml` publica as branches `sprint-03` e `sprint-04` no mesmo endereço do GitHub Pages: o que está no ar é a versão da última branch publicada.
 
 | Informação acadêmica | Detalhes |
 | --- | --- |
 | Curso | 2º ano de Ciência da Computação |
 | Disciplina | Application Development |
 | Professor | Allan Roberto Molto |
-| Período | 2º semestre — Sprint 3 |
+| Período | 2º semestre — Sprint 4 |
 | Valor da entrega | 10,0 pontos |
 
 ## Sumário
 
-- [Demonstração online](#demonstração-online)
 - [Objetivo da Sprint](#objetivo-da-sprint)
-- [Funcionalidades entregues](#funcionalidades-entregues)
+- [O que mudou em relação à Sprint 3](#o-que-mudou-em-relação-à-sprint-3)
+- [Funcionalidades](#funcionalidades)
 - [Regras de classificação](#regras-de-classificação)
 - [Fluxo da solução](#fluxo-da-solução)
 - [Atendimento aos critérios de avaliação](#atendimento-aos-critérios-de-avaliação)
@@ -38,229 +38,181 @@ O ambiente publicado utiliza a branch `sprint-03` e pode ser usado para demonstr
 - [Tecnologias utilizadas](#tecnologias-utilizadas)
 - [Como executar](#como-executar)
 - [Qualidade e validação](#qualidade-e-validação)
+- [Limitações](#limitações)
 - [Vídeo Pitch](#vídeo-pitch)
-- [Integrantes](#integrantes)
 
 ## Objetivo da Sprint
 
-O objetivo da Sprint 3 é acrescentar recursos de **análise e classificação automática das condições da vegetação** monitorada ao longo das rodovias.
+Transformar os dados de altura da vegetação em informação para decisão: onde está o problema, qual a condição do ponto, qual a prioridade e qual ação tomar. A aplicação analisa automaticamente cada ponto monitorado, classifica a condição e organiza a fila de atendimento.
 
-A aplicação recebe ou utiliza dados de altura, processa cada ponto conforme faixas de risco previamente definidas e apresenta no dashboard as quatro informações obrigatórias:
+## O que mudou em relação à Sprint 3
 
-> **Localização | Altura da vegetação | Classificação | Ação recomendada**
+| Aspecto | Sprint 3 | Sprint 4 |
+| --- | --- | --- |
+| Nomenclatura | Normal, Atenção, Risco, Crítico | Monitorado, Atenção, Intervenção Programada, Intervenção Prioritária (limites mantidos) |
+| Modelo do ponto | Nome da cidade + coordenadas; altura associada pela posição em uma lista | Ponto com ID, rodovia, km, trecho, altura e data da última leitura; a altura pertence ao ponto |
+| Prioridade | Inexistente | Cada faixa tem prioridade numérica; a lista é ordenada por prioridade e depois por altura |
+| Destaque visual | Badge colorido | Badge, linha colorida na tabela, contadores por nível e fila de atendimento |
+| Dados inválidos | A exceção podia interromper a renderização | Ponto vira "Leitura inválida" e o restante é processado normalmente |
+| Atualização dinâmica | Apenas renderização | Filtros por classificação e rodovia + registro de nova leitura com reclassificação imediata |
 
-Além da classificação por altura, a aplicação preserva as funcionalidades complementares de mapa, dados climáticos, alertas e indicadores executivos.
+## Funcionalidades
 
-## Funcionalidades entregues
-
-- classificação automática da vegetação conforme a altura registrada;
-- array de objetos com faixas, classificações e ações recomendadas;
-- processamento dos pontos monitorados com funções JavaScript/TypeScript e `forEach()`;
-- uso de estruturas condicionais para determinar a situação de cada ponto;
-- criação dinâmica das linhas da tabela por meio de componentes React;
-- apresentação de localização, altura, classificação e ação recomendada;
-- identificação visual por cores para os níveis Normal, Atenção, Risco e Crítico;
-- indicadores resumidos de altura média e quantidade de intervenções necessárias;
-- consulta de até 10 localidades por meio do OpenStreetMap Nominatim;
-- dados climáticos complementares obtidos pela Open-Meteo;
-- funcionamento da classificação mesmo quando a API climática estiver indisponível;
-- fallback local para manter os pontos monitorados quando a consulta de localidades falhar.
+- classificação automática por altura, com faixas em um array de objetos (`VEGETATION_HEIGHT_BANDS`) e estruturas condicionais;
+- processamento em lote de 15 pontos monitorados com `forEach()` (`classifyMonitoredPoints`);
+- **prioridade de atendimento** por ponto e ordenação do mais urgente para o menos urgente;
+- **fila de atendimento** com os pontos que exigem serviço de campo;
+- contadores por classificação (inclui leituras inválidas);
+- **filtros** por classificação e por rodovia;
+- **registro de nova leitura**: o ponto é reclassificado e todo o painel se atualiza sem recarregar a página;
+- identificação visual por cores em badge, linha da tabela e contadores;
+- ação recomendada para cada ponto, inclusive para leitura inválida (revalidar o sensor);
+- mapa, clima (Open-Meteo), sensoriamento fictício e alertas da Sprint 3 preservados; a classificação não depende dessas integrações.
 
 ## Regras de classificação
 
-As regras foram definidas pelo grupo de forma coerente com a proposta de monitoramento e estão centralizadas no array `VEGETATION_HEIGHT_BANDS`.
+As regras foram definidas pelo grupo e estão centralizadas em `VEGETATION_HEIGHT_BANDS`. **Os limites são parâmetros deste protótipo e não correspondem a uma norma oficial da concessionária.**
 
-| Faixa de altura | Classificação | Interpretação | Ação recomendada |
+| Faixa de altura | Classificação | Prioridade | Ação recomendada |
 | --- | --- | --- | --- |
-| De 0 a 30 cm | **Normal** | Vegetação dentro da faixa segura | Manter o monitoramento de rotina |
-| Acima de 30 até 50 cm | **Atenção** | Vegetação próxima do limite operacional | Aumentar a frequência de inspeção do ponto |
-| Acima de 50 até 80 cm | **Risco** | Vegetação exige planejamento de manutenção | Programar o serviço de roçada |
-| Acima de 80 cm | **Crítico** | Vegetação exige resposta prioritária | Realizar intervenção imediata e sinalizar a área |
+| De 0 a 30 cm | **Monitorado** | 1 | Manter o monitoramento de rotina |
+| Acima de 30 até 50 cm | **Atenção** | 2 | Aumentar a frequência de inspeção do ponto |
+| Acima de 50 até 80 cm | **Intervenção Programada** | 3 | Programar o serviço de roçada |
+| Acima de 80 cm | **Intervenção Prioritária** | 4 | Realizar intervenção imediata e sinalizar a área |
+| Sem leitura / valor inválido | **Leitura inválida** | 0 | Revalidar a leitura: verificar o sensor ou reinspecionar o ponto |
 
-Os limites de `30`, `50` e `80` centímetros pertencem, respectivamente, às classificações **Normal**, **Atenção** e **Risco**. A função de classificação rejeita alturas negativas, infinitas ou que não sejam numéricas.
+- Os limites 30, 50 e 80 cm pertencem à faixa que encerram (30 cm é "Monitorado").
+- **Ordenação:** prioridade decrescente, depois altura decrescente, depois ID.
+- **Fila de atendimento:** pontos com prioridade 3 ou 4.
+- **Leitura inválida** (ausente, negativa, `NaN` ou infinita) não entra na fila nem na média de altura, mas é contada e destacada para não passar despercebida.
 
 ### Identificação visual
 
-| Classificação | Cor utilizada |
+| Classificação | Cor |
 | --- | --- |
-| Normal | Verde |
+| Monitorado | Verde |
 | Atenção | Amarelo |
-| Risco | Laranja |
-| Crítico | Vermelho |
+| Intervenção Programada | Laranja |
+| Intervenção Prioritária | Vermelho |
+| Leitura inválida | Cinza |
 
 > [!IMPORTANT]
-> As alturas presentes no repositório formam uma massa de dados demonstrativa e determinística. Elas permitem validar toda a lógica da Sprint 3, mas não representam medições reais de campo. A estrutura foi preparada para que esses valores possam ser substituídos futuramente por dados de sensores ou de uma API.
+> Rodovias, quilometragens, trechos e alturas em `src/shared/constants/monitored-points.ts` são uma **massa de dados demonstrativa e determinística**. Não são medições reais de campo nem dados oficiais de uma concessionária. Alturas de 30, 50 e 80 cm exercitam os limites das faixas e o ponto `PT-015` simula falha de sensor. A estrutura está pronta para receber dados de sensores ou de uma API.
 
 ## Fluxo da solução
 
 ```mermaid
 flowchart LR
-    A[Localidades monitoradas] --> B[Alturas da vegetação]
-    B --> C[Processamento com forEach]
-    C --> D{Classificação por altura}
-    D --> E[Normal]
+    A[Pontos monitorados<br/>ID, rodovia, km, altura, leitura] --> B[classifyMonitoredPoints<br/>forEach]
+    B --> C{Altura válida?}
+    C -- não --> I[Leitura inválida]
+    C -- sim --> D{Faixa de altura}
+    D --> E[Monitorado]
     D --> F[Atenção]
-    D --> G[Risco]
-    D --> H[Crítico]
-    E --> I[Dashboard dinâmico]
-    F --> I
-    G --> I
-    H --> I
-    I --> J[Ação recomendada por ponto]
+    D --> G[Intervenção Programada]
+    D --> H[Intervenção Prioritária]
+    E & F & G & H & I --> J[Ordenação por prioridade]
+    J --> K[Dashboard: contadores, fila, filtros e tabela]
+    L[Nova leitura] --> A
 ```
 
-O processamento principal segue estas etapas:
-
-1. `sensingService` obtém as localidades monitoradas ou utiliza a lista de fallback.
-2. `buildVegetationMonitoringPoints()` percorre as localidades com `forEach()` e associa uma altura a cada ponto.
-3. `classifyVegetationHeight()` utiliza condicionais para selecionar a faixa correspondente.
-4. Cada resultado recebe uma classificação e uma ação recomendada.
-5. `VegetationMonitoringTable` cria dinamicamente as linhas da tabela no dashboard.
-6. `VegetationClassificationBadge` aplica a classe visual correspondente ao nível encontrado.
+1. `MonitoredPointsProvider` mantém os pontos em estado React, inicializados pela fixture.
+2. `classifyMonitoredPoints()` percorre os pontos com `forEach()` e chama `classifyMonitoredPoint()`, que usa `classifyVegetationHeight()` (condicionais) ou marca a leitura como inválida.
+3. `sortByPriority()`, `getInterventionQueue()`, `summarizeByCondition()` e `filterPoints()` produzem as visões do painel.
+4. Ao registrar uma leitura, `registerReading()` devolve uma nova lista; o React reclassifica e atualiza tudo.
 
 ## Atendimento aos critérios de avaliação
 
-| Critério | Peso | Evidência implementada | Situação |
-| --- | ---: | --- | --- |
-| Implementação da lógica de classificação da vegetação | 3,0 | Array de faixas, condicionais, validação de entrada e testes dos limites | Concluído |
-| JavaScript para manipulação dos dados e atualização dinâmica do dashboard | 2,5 | TypeScript compilado para JavaScript, `forEach()` e renderização dinâmica com React | Concluído |
-| Localidades, altura, classificação e ação recomendada | 2,5 | Tabela completa no dashboard e na página de sensoriamento, com cores por nível | Concluído |
-| Vídeo Pitch de 1 minuto no YouTube | 2,0 | Seção preparada para receber o link após a gravação | Em produção |
-| **Total** | **10,0** |  |  |
+| Critério | Peso | Evidência no código |
+| --- | --- | --- |
+| Lógica de classificação da vegetação | 3,0 | `vegetation-height-bands.ts`, `vegetation-classification.util.ts`, testes de limites e de entrada inválida |
+| Processamento dos dados e construção/atualização dinâmica do dashboard | 2,5 | `classifyMonitoredPoints` (`forEach`), `monitored-points.util.ts`, `MonitoredPointsProvider`, `ReadingForm`, `VegetationFilters` |
+| Apresentação de localidades, condições e ações recomendadas | 2,5 | `VegetationMonitoringTable`, `InterventionQueue`, `ConditionSummary`, estilos em `condition-styles.ts` |
+| Vídeo Pitch de 1 minuto no YouTube | 2,0 | Link na seção [Vídeo Pitch](#vídeo-pitch) |
 
 ### Evidências no código
 
 | Arquivo | Responsabilidade |
 | --- | --- |
-| `src/shared/constants/vegetation-height-bands.ts` | Faixas de altura, classificações, ações e alturas demonstrativas |
-| `src/shared/utils/vegetation-classification.util.ts` | Validação, condicionais, `forEach()` e montagem dos pontos classificados |
-| `src/domain/entities/vegetation-monitoring.entity.ts` | Tipos do domínio de monitoramento da vegetação |
-| `src/presentation/components/vegetation/vegetation-monitoring-table.tsx` | Tabela dinâmica com as quatro informações obrigatórias |
-| `src/presentation/components/shared/vegetation-classification-badge.tsx` | Cores e estilos visuais das classificações |
-| `src/presentation/pages/dashboard.page.tsx` | Indicadores e apresentação da classificação no dashboard |
-| `tests/unit/vegetation-classification.util.test.ts` | Testes das faixas, entradas inválidas e ações recomendadas |
+| `src/shared/constants/vegetation-height-bands.ts` | Faixas, classificações, prioridades e ações |
+| `src/shared/constants/monitored-points.ts` | Pontos monitorados demonstrativos |
+| `src/shared/utils/vegetation-classification.util.ts` | Validação, condicionais e classificação em lote com `forEach()` |
+| `src/shared/utils/monitored-points.util.ts` | Ordenação, fila, contadores, média, filtros e registro de leitura |
+| `src/domain/entities/vegetation-monitoring.entity.ts` | Tipos do domínio |
+| `src/app/providers/monitored-points.provider.tsx` | Estado compartilhado dos pontos |
+| `src/presentation/components/vegetation/` | Painel, tabela, fila, filtros, contadores e formulário de leitura |
+| `src/presentation/pages/dashboard.page.tsx` | Indicadores e composição do dashboard |
+| `tests/unit/` | Testes automatizados |
 
 ## Arquitetura e organização
 
-O projeto utiliza uma organização em camadas para separar domínio, integrações, regras de processamento e interface.
-
-```text
+```
 src/
-├── app/                     # Roteamento e providers da aplicação
+├── app/                     # Roteamento e providers (inclui o estado dos pontos monitorados)
 ├── application/             # DTOs e mapeadores de dados externos
 ├── domain/                  # Entidades e tipos do domínio
 ├── infrastructure/          # Clientes HTTP e serviços de integração
 ├── presentation/
-│   ├── components/          # Tabelas, badges, mapa e componentes compartilhados
-│   ├── hooks/               # Consultas e gerenciamento de estado assíncrono
+│   ├── components/          # Painel de vegetação, mapa e componentes compartilhados
+│   ├── hooks/               # Consultas assíncronas e acesso ao estado dos pontos
 │   ├── layouts/             # Estrutura visual compartilhada
 │   └── pages/               # Dashboard, mapa, sensoriamento e alertas
 ├── shared/
-│   ├── constants/           # Faixas, localidades de fallback e chaves de consulta
-│   └── utils/               # Classificação e cálculos auxiliares
+│   ├── constants/           # Faixas, pontos monitorados e localidades de fallback
+│   └── utils/               # Classificação, prioridade, filtros e cálculos auxiliares
 └── styles/                  # Estilos globais
-
-tests/
-└── unit/                    # Testes automatizados
+tests/unit/                  # Testes automatizados
 ```
 
-### Integrações externas
-
-- **OpenStreetMap Nominatim:** consulta das localidades monitoradas;
-- **Open-Meteo:** condições climáticas atuais por coordenada.
-
-As informações climáticas são complementares. Se a Open-Meteo estiver lenta ou indisponível, o dashboard informa a falha e mantém a classificação da vegetação acessível.
+Integrações externas (complementares, a classificação funciona sem elas): **OpenStreetMap Nominatim** (localidades do mapa e do clima) e **Open-Meteo** (clima atual).
 
 ## Tecnologias utilizadas
 
-- React 19;
-- TypeScript;
-- Vite 8;
-- React Router;
-- TanStack Query;
-- Tailwind CSS;
-- Axios;
-- Leaflet e React Leaflet;
-- Vitest;
-- ESLint.
-
-O código-fonte utiliza TypeScript, que é compilado para JavaScript pelo Vite. A tipagem explícita protege as faixas, classificações e ações contra combinações inválidas durante o desenvolvimento.
+React 19, TypeScript, Vite 8, React Router, TanStack Query, Tailwind CSS, Axios, Leaflet e React Leaflet, Day.js, Vitest, ESLint. Não há backend: as regras de negócio são funções puras em `src/shared/utils`, o que as torna testáveis sem interface.
 
 ## Como executar
 
-### Pré-requisitos
-
-- Node.js 22.12 ou superior, ou Node.js 20.19+;
-- npm 10 ou superior.
-
-### Instalação
+Pré-requisitos: Node.js 22.12+ (ou 20.19+) e npm 10+.
 
 ```bash
-git clone https://github.com/JoaoVictorAAbreu-Dev/fiap-application-development-sprint-02.git
-cd fiap-application-development-sprint-02
-git checkout sprint-03
+git clone https://github.com/JoaoVictorAAbreu-Dev/Fiap-sprint03--application-development.git
+cd Fiap-sprint03--application-development
+git checkout sprint-04
 npm ci
-```
-
-### Configuração
-
-Linux ou macOS:
-
-```bash
-cp .env.example .env
-```
-
-Windows PowerShell:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-### Ambiente de desenvolvimento
-
-```bash
+cp .env.example .env   # Windows PowerShell: Copy-Item .env.example .env
 npm run dev
 ```
 
-O Vite informará no terminal o endereço local da aplicação, normalmente `http://localhost:5173`.
-
-## Scripts disponíveis
+O Vite informa o endereço local, normalmente `http://localhost:5173`.
 
 | Comando | Finalidade |
 | --- | --- |
-| `npm run dev` | Inicia o servidor local de desenvolvimento |
-| `npm run test` | Executa todos os testes unitários uma vez |
-| `npm run test:watch` | Executa os testes em modo de observação |
-| `npm run typecheck` | Verifica os tipos TypeScript sem gerar arquivos |
-| `npm run lint` | Executa a análise estática com tolerância zero para avisos |
-| `npm run build` | Valida os tipos e gera o build de produção |
-| `npm run preview` | Executa localmente o build já gerado |
+| `npm run dev` | Servidor de desenvolvimento |
+| `npm run test` | Testes unitários |
+| `npm run typecheck` | Verificação de tipos |
+| `npm run lint` | ESLint sem avisos |
+| `npm run build` | Build de produção |
+| `npm run preview` | Executa o build localmente |
 
 ## Qualidade e validação
 
-Para validar a entrega completa:
-
 ```bash
-npm run test
-npm run typecheck
-npm run lint
-npm run build
-npm audit
+npm run test && npm run typecheck && npm run lint && npm run build
 ```
 
-No estado atual da Sprint 3:
+Estado verificado ao final do desenvolvimento da Sprint 4:
 
-- **21 testes unitários aprovados** em 6 arquivos;
-- verificação de tipos aprovada;
-- lint aprovado sem avisos;
-- build de produção concluído;
-- auditoria npm sem vulnerabilidades conhecidas;
-- dashboard validado em desktop e dispositivo móvel;
-- estados de sucesso, carregamento e falha da API climática verificados.
+- **36 testes unitários aprovados** em 7 arquivos (limites 30/50/80 cm, entradas inválidas, lote com leitura inválida, ordenação, fila, média, filtros e registro de leitura);
+- verificação de tipos, lint (sem avisos) e build de produção aprovados.
+
+## Limitações
+
+- Os dados são demonstrativos; não há integração com sensores reais nem persistência: ao recarregar a página, as leituras registradas voltam ao estado inicial.
+- As faixas de altura são parâmetros do protótipo, sem fonte normativa.
+- Os testes cobrem a lógica; não há testes automatizados de interface.
 
 ## Vídeo Pitch
 
-**Link do vídeo da Sprint 3: https://youtu.be/VlhCzEI9VtM** 
+**Link do vídeo da Sprint 4: _a preencher após a gravação (YouTube)_**
 
-<!-- Substitua o texto acima pelo link público do vídeo da Sprint 3. -->
-
+Vídeo da Sprint 3: <https://youtu.be/VlhCzEI9VtM>
