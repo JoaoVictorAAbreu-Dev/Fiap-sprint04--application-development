@@ -35,7 +35,7 @@ export const RiskMarker = ({ weather }: RiskMarkerProps) => {
           <p className="font-semibold text-slate-900">{weather.localityName}</p>
           <p>Latitude: {weather.latitude.toFixed(6)}</p>
           <p>Longitude: {weather.longitude.toFixed(6)}</p>
-          <p>Temperatura: {weather.temperatureC.toFixed(1)} degC</p>
+          <p>Temperatura: {weather.temperatureC.toFixed(1)} °C</p>
           <p>Umidade: {weather.humidityPct.toFixed(0)}%</p>
           <p>Chuva: {weather.precipitationMm.toFixed(1)} mm</p>
           <p>Velocidade do vento: {weather.windSpeedKmh.toFixed(1)} km/h</p>

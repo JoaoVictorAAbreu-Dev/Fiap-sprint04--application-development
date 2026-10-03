@@ -83,9 +83,9 @@ export const SensingPage = () => {
       <VegetationMonitoringTable points={vegetationPoints} />
 
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h3 className="text-base font-semibold text-slate-900">Sensoriamento ficticio por localidade</h3>
+        <h3 className="text-base font-semibold text-slate-900">Sensoriamento fictício por localidade</h3>
         <p className="mt-2 text-sm text-slate-600">
-          Indicadores sinteticos de vegetacao, solo, qualidade do ar e foco termico.
+          Indicadores sintéticos de vegetação, solo, qualidade do ar e foco térmico.
         </p>
 
         {isWeatherLoading && <p className="mt-2 text-sm text-slate-600">Calculando indicadores de sensores...</p>}
@@ -96,10 +96,10 @@ export const SensingPage = () => {
               <thead>
                 <tr className="text-left text-xs uppercase tracking-wide text-slate-500">
                   <th className="py-2 pr-4">Nome</th>
-                  <th className="py-2 pr-4">Estresse de vegetacao</th>
+                  <th className="py-2 pr-4">Estresse de vegetação</th>
                   <th className="py-2 pr-4">Umidade do solo</th>
-                  <th className="py-2 pr-4">Indice de qualidade do ar</th>
-                  <th className="py-2 pr-4">Foco termico</th>
+                  <th className="py-2 pr-4">Índice de qualidade do ar</th>
+                  <th className="py-2 pr-4">Foco térmico</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
@@ -111,7 +111,7 @@ export const SensingPage = () => {
                       <td className="py-2 pr-4">{sensing.vegetationStressPct.toFixed(1)}%</td>
                       <td className="py-2 pr-4">{sensing.soilMoisturePct.toFixed(1)}%</td>
                       <td className="py-2 pr-4">{sensing.airQualityIndex}</td>
-                      <td className="py-2 pr-4">{sensing.heatFocusC.toFixed(1)} degC</td>
+                      <td className="py-2 pr-4">{sensing.heatFocusC.toFixed(1)} °C</td>
                     </tr>
                   );
                 })}
@@ -122,7 +122,7 @@ export const SensingPage = () => {
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h3 className="text-base font-semibold text-slate-900">Condicoes climaticas atuais (Open-Meteo)</h3>
+        <h3 className="text-base font-semibold text-slate-900">Condições climáticas atuais (Open-Meteo)</h3>
 
         {isWeatherLoading && <p className="mt-2 text-sm text-slate-600">Carregando clima dos pontos...</p>}
 
@@ -150,15 +150,15 @@ export const SensingPage = () => {
                   <th className="py-2 pr-4">Temperatura</th>
                   <th className="py-2 pr-4">Umidade</th>
                   <th className="py-2 pr-4">Vento</th>
-                  <th className="py-2 pr-4">Precipitacao</th>
-                  <th className="py-2 pr-4">Condicao</th>
+                  <th className="py-2 pr-4">Precipitação</th>
+                  <th className="py-2 pr-4">Condição</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
                 {weatherData?.map((item) => (
                   <tr key={`${item.localityName}-${item.latitude}-${item.longitude}`}>
                     <td className="py-2 pr-4">{item.localityName}</td>
-                    <td className="py-2 pr-4">{item.temperatureC.toFixed(1)} degC</td>
+                    <td className="py-2 pr-4">{item.temperatureC.toFixed(1)} °C</td>
                     <td className="py-2 pr-4">{item.humidityPct.toFixed(0)}%</td>
                     <td className="py-2 pr-4">{item.windSpeedKmh.toFixed(1)} km/h</td>
                     <td className="py-2 pr-4">{item.precipitationMm.toFixed(1)} mm</td>

@@ -59,8 +59,8 @@ export const AlertsPage = () => {
                 <th className="py-2 pr-4">Risco</th>
                 <th className="py-2 pr-4">Temp.</th>
                 <th className="py-2 pr-4">Vento</th>
-                <th className="py-2 pr-4">Precipitacao</th>
-                <th className="py-2 pr-4">Condicao</th>
+                <th className="py-2 pr-4">Precipitação</th>
+                <th className="py-2 pr-4">Condição</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
@@ -68,7 +68,7 @@ export const AlertsPage = () => {
                 <tr key={`${item.localityName}-${item.latitude}-${item.longitude}`}>
                   <td className="py-2 pr-4">{item.localityName}</td>
                   <td className="py-2 pr-4">{getRiskLevel(item.riskScore)}</td>
-                  <td className="py-2 pr-4">{item.temperatureC.toFixed(1)} degC</td>
+                  <td className="py-2 pr-4">{item.temperatureC.toFixed(1)} °C</td>
                   <td className="py-2 pr-4">{item.windSpeedKmh.toFixed(1)} km/h</td>
                   <td className="py-2 pr-4">{item.precipitationMm.toFixed(1)} mm</td>
                   <td className="py-2 pr-4">{item.weatherCondition}</td>

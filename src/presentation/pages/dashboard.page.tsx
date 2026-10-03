@@ -102,20 +102,20 @@ export const DashboardPage = () => {
 
       {hasWeatherData ? <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Area mais critica monitorada</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Área mais crítica monitorada</p>
           <p className="mt-2 text-xl font-semibold text-slate-900">
             {mostCriticalArea ? mostCriticalArea.localityName : 'Sem dados'}
           </p>
           {mostCriticalArea ? (
             <p className="mt-2 text-sm text-slate-600">
-              Temperatura {mostCriticalArea.temperatureC.toFixed(1)} degC | Vento{' '}
-              {mostCriticalArea.windSpeedKmh.toFixed(1)} km/h | Precipitacao{' '}
+              Temperatura {mostCriticalArea.temperatureC.toFixed(1)} °C | Vento{' '}
+              {mostCriticalArea.windSpeedKmh.toFixed(1)} km/h | Precipitação{' '}
               {mostCriticalArea.precipitationMm.toFixed(1)} mm
             </p>
           ) : null}
           {mostCriticalArea ? (
             <p className="mt-2 text-xs font-semibold text-slate-500">
-              Classificacao: {getRiskLevel(mostCriticalArea.riskScore)}
+              Classificação: {getRiskLevel(mostCriticalArea.riskScore)}
             </p>
           ) : null}
         </article>

@@ -85,15 +85,16 @@ No PowerShell, use `Copy-Item .env.example .env` no lugar de `cp`. O Vite exibir
 ## Organização do código
 
 ```text
-src/
-├── app/             # Rotas e providers
-├── application/     # DTOs e mapeadores
-├── domain/          # Entidades e tipos de domínio
-├── infrastructure/  # Clientes HTTP e integrações
-├── presentation/    # Páginas, componentes, hooks e layouts
-├── shared/          # Constantes e funções utilitárias
-└── styles/          # Estilos globais
-tests/unit/           # Testes unitários
+.
+├── src/
+│   ├── app/             # Rotas e providers
+│   ├── application/     # DTOs e mapeadores
+│   ├── domain/          # Entidades e tipos de domínio
+│   ├── infrastructure/  # Clientes HTTP e integrações
+│   ├── presentation/    # Páginas, componentes, hooks e layouts
+│   ├── shared/          # Constantes e funções utilitárias
+│   └── styles/          # Estilos globais
+└── tests/unit/          # Testes unitários
 ```
 
 ## Equipe
