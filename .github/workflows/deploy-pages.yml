@@ -3,8 +3,7 @@ name: Deploy GitHub Pages
 on:
   push:
     branches:
-      - sprint-03
-      - sprint-04
+      - master
   workflow_dispatch:
 
 permissions:
