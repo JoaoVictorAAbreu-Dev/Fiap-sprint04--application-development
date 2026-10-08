@@ -10,7 +10,18 @@ type VegetationFiltersProps = {
 const selectClass = 'mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800';
 
 export const VegetationFilters = ({ filters, highways, onChange }: VegetationFiltersProps) => (
-  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+    <label className="text-xs font-medium uppercase tracking-wide text-slate-500">
+      Buscar ponto ou trecho
+      <input
+        type="search"
+        className={selectClass}
+        value={filters.search}
+        onChange={(event) => onChange({ ...filters, search: event.target.value })}
+        placeholder="ID, rodovia, km ou trecho"
+        aria-label="Buscar por identificador, rodovia, quilômetro ou trecho"
+      />
+    </label>
     <label className="text-xs font-medium uppercase tracking-wide text-slate-500">
       Classificação
       <select

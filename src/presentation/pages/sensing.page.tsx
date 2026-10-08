@@ -2,7 +2,7 @@ import { VegetationMonitoringTable } from '@/presentation/components/vegetation/
 import { useCurrentWeatherByLocalitiesQuery } from '@/presentation/hooks/queries/use-current-weather-by-localities.query';
 import { useMonitoredLocalitiesQuery } from '@/presentation/hooks/queries/use-monitored-localities.query';
 import { buildFictitiousSensingSnapshot } from '@/shared/utils/sensing-simulation.util';
-import { useClassifiedPoints } from '@/presentation/hooks/use-monitored-points';
+import { useClassifiedPoints, useMonitoredPoints } from '@/presentation/hooks/use-monitored-points';
 import { sortByPriority } from '@/shared/utils/monitored-points.util';
 
 export const SensingPage = () => {
@@ -17,6 +17,7 @@ export const SensingPage = () => {
     refetch: refetchWeather,
   } = useCurrentWeatherByLocalitiesQuery(data ?? []);
   const classifiedPoints = useClassifiedPoints();
+  const { historyByPoint } = useMonitoredPoints();
   const vegetationPoints = sortByPriority(classifiedPoints);
 
   if (isLoading) {
@@ -80,7 +81,7 @@ export const SensingPage = () => {
         </div>
       </div>
 
-      <VegetationMonitoringTable points={vegetationPoints} />
+      <VegetationMonitoringTable points={vegetationPoints} historyByPoint={historyByPoint} />
 
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h3 className="text-base font-semibold text-slate-900">Sensoriamento fictício por localidade</h3>
