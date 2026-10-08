@@ -31,9 +31,18 @@ export type VegetationMonitoringPoint = MonitoredPoint & {
   classification: PointCondition;
   priority: number;
   recommendedAction: string;
+  classificationBandLabel: string | null;
 };
 
 export type PointFilters = {
   classification: PointCondition | 'todas';
   highway: string | 'todas';
+  search: string;
 };
+
+export type ReadingHistoryEntry = {
+  heightCm: number | null;
+  readAt: string;
+};
+
+export type ReadingHistoryByPoint = Record<string, ReadingHistoryEntry[]>;
