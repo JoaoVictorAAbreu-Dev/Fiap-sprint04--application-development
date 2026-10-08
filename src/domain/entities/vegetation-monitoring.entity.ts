@@ -37,7 +37,7 @@ export type VegetationMonitoringPoint = MonitoredPoint & {
 export type PointFilters = {
   classification: PointCondition | 'todas';
   highway: string | 'todas';
-  search: string;
+  search?: string;
 };
 
 export type ReadingHistoryEntry = {

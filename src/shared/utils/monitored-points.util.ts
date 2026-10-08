@@ -69,7 +69,7 @@ export const filterPoints = (
     (point) =>
       (filters.classification === 'todas' || point.classification === filters.classification) &&
       (filters.highway === 'todas' || point.highway === filters.highway) &&
-      matchesSearch(point, filters.search),
+      matchesSearch(point, filters.search ?? ''),
   );
 
 const matchesSearch = (point: VegetationMonitoringPoint, search: string): boolean => {
