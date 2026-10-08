@@ -1,7 +1,9 @@
 # GreenWatch — Sprint 4
 
-**2º ano de Ciência da Computação · Application Development**<br>
-**Professor:** Allan Roberto Molto · **2º semestre**<br>
+**2º ano de Ciência da Computação**<br>
+**Application Development**<br>
+**PROF. ALLAN ROBERTO MOLTO**<br>
+**2º SEMESTRE – SPRINT 4**<br>
 **Valor total:** 10 pontos
 
 ## Sobre o projeto
@@ -9,6 +11,12 @@
 O GreenWatch apoia equipes responsáveis pela manutenção da vegetação ao longo de rodovias. A aplicação processa os pontos monitorados, classifica automaticamente a altura da vegetação, recomenda uma ação e organiza os locais por prioridade de atendimento.
 
 **Objetivo da Sprint:** evoluir a solução da Sprint 3 para transformar dados de vegetação coletados ao longo das rodovias em informações que apoiem a tomada de decisão das equipes de manutenção. O dashboard destaca as localidades que precisam de maior atenção ou intervenção.
+
+## Descrição da atividade
+
+Uma concessionária monitora diversos trechos de suas rodovias e recebe periodicamente informações sobre a altura da vegetação. Como o grande volume de dados torna inviável analisar cada ponto manualmente, o GreenWatch processa os pontos monitorados e os classifica automaticamente.
+
+A aplicação estabelece uma prioridade de atendimento, apresenta um painel para a equipe de manutenção e indica a ação recomendada para cada localidade. As faixas de classificação são definidas pelo grupo, desde que sejam coerentes e estejam documentadas.
 
 **[Acessar a aplicação](https://joaovictoraabreu-dev.github.io/Fiap-sprint03--application-development/)**
 
@@ -19,8 +27,14 @@ O GreenWatch apoia equipes responsáveis pela manutenção da vegetação ao lon
 - Processamento de vários pontos usando `forEach()`.
 - Dashboard com condições, indicadores, localidades e ações recomendadas.
 - Identificação visual das condições com cores e estilos próprios.
+- Indicação automática da ação recomendada para cada ponto.
+- Destaque dos locais com maior prioridade de intervenção.
 - Filtros por condição e rodovia.
+- Busca por identificador, rodovia, quilômetro ou trecho.
 - Ordenação por prioridade e fila de intervenção.
+- Expansão, impressão e exportação CSV da fila completa de intervenção.
+- Histórico das leituras exibido por ponto durante a sessão atual.
+- Sinalização visual de leituras com 30 dias ou mais.
 - Registro de nova leitura, com atualização e reclassificação imediatas do painel.
 
 ## Regras de classificação
@@ -46,6 +60,14 @@ Os pontos em `src/shared/constants/monitored-points.ts` são dados demonstrativo
 3. Funções utilitárias calculam o resumo por condição, filtram e ordenam os pontos e montam a fila de intervenção.
 4. Ao registrar uma nova leitura, o estado compartilhado é atualizado e o dashboard reflete a nova classificação sem recarregar a página.
 
+## Recursos de consulta
+
+A tabela permite buscar pontos por identificador, rodovia, quilômetro ou trecho, em conjunto com os filtros de condição e rodovia. A faixa aplicada aparece junto à classificação para facilitar a conferência da regra.
+
+A fila pode ser expandida para mostrar todos os pontos, impressa ou exportada em CSV. A impressão inclui a fila completa, mesmo quando a visualização da tela está recolhida.
+
+O histórico começa com a leitura demonstrativa disponível e recebe novas leituras durante a sessão. Ele é reiniciado ao recarregar a aplicação ou restaurar os dados, pois esta versão não utiliza persistência. Leituras com 30 dias ou mais, ou com data inválida, recebem o destaque “Leitura antiga”; esse aviso não altera sua classificação ou prioridade.
+
 ## Critérios da atividade
 
 | Critério | Peso | Onde está implementado |
@@ -57,7 +79,9 @@ Os pontos em `src/shared/constants/monitored-points.ts` são dados demonstrativo
 
 ## Tecnologias
 
-React 19, TypeScript, Vite, React Router, TanStack Query, Tailwind CSS, Axios, Leaflet, Day.js e Vitest. O projeto não possui back-end: as regras de classificação e processamento ficam no front-end. A aplicação também mantém o mapa e os dados climáticos da Sprint 3, com integrações OpenStreetMap Nominatim e Open-Meteo.
+Para esta Sprint, a aplicação foi desenvolvida com React, TypeScript, HTML e CSS, conforme trabalhado na disciplina. O projeto não possui back-end: as regras de classificação e processamento ficam no front-end. React e Node.js são tecnologias opcionais na atividade; nesta implementação, o processamento é realizado no React.
+
+Também são utilizados Vite, React Router, TanStack Query, Tailwind CSS, Axios, Leaflet, Day.js e Vitest. A aplicação mantém o mapa e os dados climáticos da Sprint 3, com integrações OpenStreetMap Nominatim e Open-Meteo.
 
 ## Executar localmente
 

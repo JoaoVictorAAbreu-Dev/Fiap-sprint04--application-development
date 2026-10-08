@@ -14,10 +14,10 @@ import {
   summarizeByCondition,
 } from '@/shared/utils/monitored-points.util';
 
-const INITIAL_FILTERS: PointFilters = { classification: 'todas', highway: 'todas' };
+const INITIAL_FILTERS: PointFilters = { classification: 'todas', highway: 'todas', search: '' };
 
 export const VegetationPanel = () => {
-  const { points, submitReading, reset } = useMonitoredPoints();
+  const { points, historyByPoint, submitReading, reset } = useMonitoredPoints();
   const classified = useClassifiedPoints();
   const [filters, setFilters] = useState<PointFilters>(INITIAL_FILTERS);
 
@@ -39,7 +39,7 @@ export const VegetationPanel = () => {
       </div>
 
       <VegetationFilters filters={filters} highways={highways} onChange={setFilters} />
-      <VegetationMonitoringTable points={visiblePoints} totalPoints={classified.length} />
+      <VegetationMonitoringTable points={visiblePoints} totalPoints={classified.length} historyByPoint={historyByPoint} />
     </div>
   );
 };

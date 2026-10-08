@@ -37,6 +37,7 @@ export const classifyMonitoredPoint = (point: MonitoredPoint): VegetationMonitor
       classification: 'Leitura inválida',
       priority: INVALID_READING_PRIORITY,
       recommendedAction: INVALID_READING_ACTION,
+      classificationBandLabel: null,
     };
   }
 
@@ -47,6 +48,7 @@ export const classifyMonitoredPoint = (point: MonitoredPoint): VegetationMonitor
     classification: band.classification,
     priority: band.priority,
     recommendedAction: band.recommendedAction,
+    classificationBandLabel: band.label,
   };
 };
 

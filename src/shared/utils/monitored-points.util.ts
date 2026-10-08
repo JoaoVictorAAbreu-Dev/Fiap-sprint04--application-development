@@ -68,8 +68,17 @@ export const filterPoints = (
   points.filter(
     (point) =>
       (filters.classification === 'todas' || point.classification === filters.classification) &&
-      (filters.highway === 'todas' || point.highway === filters.highway),
+      (filters.highway === 'todas' || point.highway === filters.highway) &&
+      matchesSearch(point, filters.search ?? ''),
   );
+
+const matchesSearch = (point: VegetationMonitoringPoint, search: string): boolean => {
+  const query = search.trim().toLocaleLowerCase('pt-BR');
+  if (!query) return true;
+
+  return [point.id, point.highway, point.segment, String(point.km), point.km.toFixed(1).replace('.', ',')]
+    .some((value) => value.toLocaleLowerCase('pt-BR').includes(query));
+};
 
 export const listHighways = (points: readonly MonitoredPoint[]): string[] =>
   [...new Set(points.map((point) => point.highway))].sort((a, b) => a.localeCompare(b));
