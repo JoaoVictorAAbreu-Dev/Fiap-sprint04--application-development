@@ -20,7 +20,11 @@ O GreenWatch apoia equipes responsáveis pela manutenção da vegetação ao lon
 - Dashboard com condições, indicadores, localidades e ações recomendadas.
 - Identificação visual das condições com cores e estilos próprios.
 - Filtros por condição e rodovia.
+- Busca por identificador, rodovia, quilômetro ou trecho.
 - Ordenação por prioridade e fila de intervenção.
+- Expansão, impressão e exportação CSV da fila completa de intervenção.
+- Histórico das leituras exibido por ponto durante a sessão atual.
+- Sinalização visual de leituras com 30 dias ou mais.
 - Registro de nova leitura, com atualização e reclassificação imediatas do painel.
 
 ## Regras de classificação
@@ -45,6 +49,14 @@ Os pontos em `src/shared/constants/monitored-points.ts` são dados demonstrativo
 2. `classifyMonitoredPoints()` percorre os pontos e aplica a classificação definida em `classifyVegetationHeight()`.
 3. Funções utilitárias calculam o resumo por condição, filtram e ordenam os pontos e montam a fila de intervenção.
 4. Ao registrar uma nova leitura, o estado compartilhado é atualizado e o dashboard reflete a nova classificação sem recarregar a página.
+
+## Recursos de consulta
+
+A tabela permite buscar pontos por identificador, rodovia, quilômetro ou trecho, em conjunto com os filtros de condição e rodovia. A faixa aplicada aparece junto à classificação para facilitar a conferência da regra.
+
+A fila pode ser expandida para mostrar todos os pontos, impressa ou exportada em CSV. A impressão inclui a fila completa, mesmo quando a visualização da tela está recolhida.
+
+O histórico começa com a leitura demonstrativa disponível e recebe novas leituras durante a sessão. Ele é reiniciado ao recarregar a aplicação ou restaurar os dados, pois esta versão não utiliza persistência. Leituras com 30 dias ou mais, ou com data inválida, recebem o destaque “Leitura antiga”; esse aviso não altera sua classificação ou prioridade.
 
 ## Critérios da atividade
 
