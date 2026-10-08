@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+.queue-print-only {
+  display: none;
+}
+
 :root {
   color-scheme: light;
 }
@@ -14,4 +18,35 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  .intervention-queue-print,
+  .intervention-queue-print * {
+    visibility: visible !important;
+  }
+
+  .intervention-queue-print {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .queue-screen {
+    display: none !important;
+  }
+
+  .queue-print-only {
+    display: block !important;
+  }
 }
